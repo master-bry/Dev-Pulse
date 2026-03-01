@@ -1,263 +1,236 @@
-# DevPulse — CI/CD Dashboard
-### Setup Guide for VS Code
+📊 DevPulse — CI/CD Monitoring Dashboard
+A real-time DevOps dashboard that aggregates GitHub Actions pipelines, Docker build logs, and AWS CloudWatch metrics into one clean interface.
 
----
 
-## What You're Building
 
-A real-time DevOps monitoring dashboard with three panels:
-- **GitHub Actions** — live workflow runs pulled from the real GitHub API
-- **Docker Builds** — build history (mock data, ready to wire to ECR/DockerHub)
-- **AWS CloudWatch** — metrics with alarm indicators (mock data, ready to wire to AWS SDK)
 
-**Stack:** React 18 + Vite + React Router v6  
-**No backend required** to get started.
 
----
 
-## Prerequisites
 
-Install these before starting:
 
-| Tool | Version | Download |
-|------|---------|---------|
-| Node.js | 18 or higher | https://nodejs.org |
-| npm | comes with Node | — |
-| VS Code | latest | https://code.visualstudio.com |
+🚀 What is DevPulse?
+DevPulse is a developer tool built to solve a common frustration — having to check GitHub, Docker Hub, AWS Console, and Slack separately just to know if your deployment is healthy.
+Instead of switching between 5 tabs, DevPulse gives you one screen that shows everything:
+·	⚡ GitHub Actions — Live workflow run statuses, commit messages, durations, and branches
+·	🐳 Docker Builds — Image build history, registry pushes, cache hits, and failures
+·	☁️ AWS CloudWatch — CPU, memory, request rate, and latency metrics with alarm detection
 
-**Verify installation:**
-```bash
-node --version   # should print v18.x.x or higher
-npm --version    # should print 9.x.x or higher
-```
+✨ Features
+GitHub Actions (Live Data)
+·	Connects to the real GitHub API using your Personal Access Token
+·	Shows all workflow runs with status, branch, commit message, and duration
+·	Colour-coded status dots: 🟢 success · 🔵 running · 🔴 failed · 🟡 queued
+·	Pulsing animation for in-progress runs
+·	Auto-refreshes every 30 seconds
+·	Manual refresh button with "last updated X minutes ago"
+Docker Builds
+·	Build history with image name, tag, registry, size, and layer count
+·	Status tracking: pushed, building, failed, cached
+·	Ready to wire to AWS ECR or Docker Hub via a backend proxy
+AWS CloudWatch
+·	Four metric cards: CPU Utilisation, Memory Usage, Request Rate, P99 Latency
+·	Area charts with 24-point time series
+·	Live delta indicators (▲ up / ▼ down vs 5 data points ago)
+·	WARN and CRIT alarm badges when metrics cross thresholds
+·	Glowing alarm animation for critical alerts
+General
+·	🌑 Dark terminal-noir UI with JetBrains Mono + Syne fonts
+·	Live UTC clock in the header
+·	Staggered entrance animations
+·	Token stored in memory only — never saved to localStorage or any server
+·	Fully component-based MVC architecture
 
----
+🖥️ Preview
+┌──────────────────────────────────────────────────────┐
+│ 📊 DevPulse          master-bry/FloodAlertApp  LIVE  │
+├──────────────────────────────────────────────────────┤
+│ ⚡ master-bry/FloodAlertApp — Actions                 │
+│  ● CI          master  Add CI workflow   success  7s │
+├─────────────────────────┬────────────────────────────┤
+│ 🐳 Docker Builds        │ ☁️  AWS CloudWatch         │
+│  ● api-gateway  pushed  │  CPU  44%  ▲ 3%   [OK]     │
+│  ● frontend     building│  MEM  67%  ▼ 1%   [OK]     │
+│  ● worker       failed  │  RPS  1240 ▲ 80   [OK]     │
+│                         │  P99  82ms ▲ 12ms [CRIT]   │
+└─────────────────────────┴────────────────────────────┘
 
-## Step 1 — Open the Project in VS Code
 
-1. Copy the entire `devpulse/` folder to wherever you keep your projects (e.g. `~/projects/devpulse`)
-2. Open VS Code
-3. Go to **File → Open Folder…** and select the `devpulse` folder
-4. Open the integrated terminal: **Terminal → New Terminal** (or press `` Ctrl+` ``)
-
----
-
-## Step 2 — Install Dependencies
-
-In the VS Code terminal, run:
-
-```bash
-npm install
-```
-
-This installs React, Vite, and React Router. It takes ~30 seconds.  
-You'll see a `node_modules/` folder appear — that's normal.
-
----
-
-## Step 3 — Start the Dev Server
-
-```bash
-npm run dev
-```
-
-You should see:
-
-```
-  VITE v5.x.x  ready in 300ms
-
-  ➜  Local:   http://localhost:5173/
-  ➜  Network: use --host to expose
-```
-
-Open **http://localhost:5173** in your browser.  
-You'll see the DevPulse login page. 🎉
-
-The dev server supports **hot module replacement** — any file you save
-instantly updates in the browser without a full reload.
-
----
-
-## Step 4 — Create a GitHub Personal Access Token
-
-To load real GitHub Actions data you need a **fine-grained PAT**:
-
-1. Go to → **https://github.com/settings/tokens?type=beta**
-2. Click **"Generate new token"**
-3. Fill in:
-   - **Token name:** `devpulse-dashboard`
-   - **Expiration:** 30 days (or your preference)
-   - **Repository access:** Select the specific repo you want to monitor
-4. Under **Permissions → Repository permissions**, set:
-   - **Actions** → Read-only ✅
-   - **Contents** → Read-only ✅ (optional, for commit messages)
-5. Click **Generate token** and **copy it immediately** (you won't see it again)
-
----
-
-## Step 5 — Connect the Dashboard
-
-Back in the browser at http://localhost:5173:
-
-1. Paste your GitHub token in the **Token** field
-2. Enter your **owner** (GitHub username or org, e.g. `microsoft`)
-3. Enter the **repository name** (e.g. `vscode`)
-4. Click **Connect & Load Workflows**
-
-Your live GitHub Actions runs will load within a few seconds!
-
----
-
-## Project Structure (MVC Pattern)
-
-```
+🗂️ Project Structure
+This project follows an MVC pattern adapted for React — every file has one clear job.
 devpulse/
-├── index.html                    ← HTML entry point
-├── vite.config.js                ← Vite config (path aliases)
-├── package.json
-├── public/
-│   └── favicon.svg
-└── src/
-    ├── main.jsx                  ← React bootstrap
-    ├── App.jsx                   ← Router setup
-    │
-    ├── styles/
-    │   ├── global.css            ← CSS variables, animations, reset
-    │   └── theme.js              ← JS colour/font constants + statusColor()
-    │
-    ├── services/                 ← MODEL: API calls & data fetching
-    │   ├── githubService.js      ← GitHub REST API
-    │   ├── dockerService.js      ← Docker builds (mock → real)
-    │   └── cloudwatchService.js  ← AWS CloudWatch (mock → real)
-    │
-    ├── hooks/                    ← MODEL: state management
-    │   ├── useAuth.jsx           ← Auth context + provider
-    │   ├── usePipelines.js       ← GitHub runs + polling
-    │   ├── useDockerBuilds.js    ← Docker builds state
-    │   ├── useMetrics.js         ← CloudWatch metrics state
-    │   └── useClock.js           ← Live UTC clock
-    │
-    ├── utils/                    ← Pure helper functions
-    │   ├── formatters.js         ← formatDuration, timeAgo, truncate
-    │   └── chartHelpers.js       ← SVG point generation
-    │
-    ├── components/               ← VIEW: UI components
-    │   ├── shared/               ← Reusable atoms
-    │   │   ├── StatusDot.jsx
-    │   │   ├── Badge.jsx
-    │   │   ├── Spinner.jsx
-    │   │   ├── Sparkline.jsx
-    │   │   ├── AreaChart.jsx
-    │   │   ├── SectionCard.jsx
-    │   │   ├── StatBar.jsx
-    │   │   └── TableHeader.jsx
-    │   ├── layout/
-    │   │   ├── Header.jsx
-    │   │   └── DashboardLayout.jsx
-    │   ├── auth/
-    │   │   ├── LoginForm.jsx
-    │   │   └── ProtectedRoute.jsx
-    │   ├── pipelines/
-    │   │   ├── PipelinesPanel.jsx
-    │   │   └── PipelineRow.jsx
-    │   ├── docker/
-    │   │   ├── DockerPanel.jsx
-    │   │   └── DockerRow.jsx
-    │   └── cloudwatch/
-    │       ├── CloudWatchPanel.jsx
-    │       └── MetricCard.jsx
-    │
-    └── pages/                    ← CONTROLLER: page-level composition
-        ├── LoginPage.jsx
-        └── DashboardPage.jsx
-```
+├── src/
+│   ├── services/              # MODEL — API calls only
+│   │   ├── githubService.js   # GitHub REST API
+│   │   ├── dockerService.js   # Docker builds (mock → real)
+│   │   └── cloudwatchService.js # AWS CloudWatch (mock → real)
+│   │
+│   ├── hooks/                 # MODEL — State & business logic
+│   │   ├── useAuth.jsx        # Auth context, login/logout
+│   │   ├── usePipelines.js    # GitHub runs + auto-refresh polling
+│   │   ├── useDockerBuilds.js # Docker state management
+│   │   ├── useMetrics.js      # CloudWatch metrics state
+│   │   └── useClock.js        # Live UTC clock
+│   │
+│   ├── components/            # VIEW — All JSX/UI
+│   │   ├── shared/            # Reusable atoms
+│   │   │   ├── StatusDot.jsx
+│   │   │   ├── Badge.jsx
+│   │   │   ├── Spinner.jsx
+│   │   │   ├── Sparkline.jsx
+│   │   │   ├── AreaChart.jsx
+│   │   │   ├── SectionCard.jsx
+│   │   │   ├── StatBar.jsx
+│   │   │   └── TableHeader.jsx
+│   │   ├── layout/
+│   │   │   ├── Header.jsx
+│   │   │   └── DashboardLayout.jsx
+│   │   ├── auth/
+│   │   │   ├── LoginForm.jsx
+│   │   │   └── ProtectedRoute.jsx
+│   │   ├── pipelines/
+│   │   │   ├── PipelinesPanel.jsx
+│   │   │   └── PipelineRow.jsx
+│   │   ├── docker/
+│   │   │   ├── DockerPanel.jsx
+│   │   │   └── DockerRow.jsx
+│   │   └── cloudwatch/
+│   │       ├── CloudWatchPanel.jsx
+│   │       └── MetricCard.jsx
+│   │
+│   ├── pages/                 # CONTROLLER — Page composers
+│   │   ├── LoginPage.jsx
+│   │   └── DashboardPage.jsx
+│   │
+│   ├── styles/
+│   │   ├── global.css         # CSS variables + animations
+│   │   └── theme.js           # JS colour + font constants
+│   │
+│   └── utils/
+│       ├── formatters.js      # formatDuration, timeAgo, truncate
+│       └── chartHelpers.js    # SVG point generation
+│
+├── index.html
+├── vite.config.js
+└── package.json
 
----
 
-## Recommended VS Code Extensions
+⚙️ Tech Stack
+Layer	Technology
+Frontend Framework	React 18
+Build Tool	Vite 5
+Routing	React Router v6
+Styling	Inline CSS + CSS Variables
+Charts	Custom SVG (no chart library)
+Fonts	JetBrains Mono + Syne (Google Fonts)
+Data — Pipelines	GitHub REST API v3 (live)
+Data — Docker	Mock service (ECR / DockerHub ready)
+Data — Metrics	Mock service (AWS SDK ready)
+Language	JavaScript ES2022
 
-Install these for the best development experience:
 
-1. **ESLint** (`dbaeumer.vscode-eslint`) — live linting
-2. **Prettier** (`esbenp.prettier-vscode`) — auto-formatting
-3. **ES7+ React/Redux/React-Native snippets** (`dsznajder.es7-react-js-snippets`) — `rafce` shortcut for components
-4. **Auto Rename Tag** (`formulahendry.auto-rename-tag`) — rename JSX tags in pairs
-5. **Path Intellisense** (`christian-kohler.path-intellisense`) — `@/` alias autocomplete
+🛠️ Getting Started
+Prerequisites
+·	Node.js v18 or higher
+·	npm (comes with Node)
+·	A GitHub account with at least one repo that has Actions workflows
+Installation
+# 1. Clone the repo
+git clone https://github.com/master-bry/devpulse.git
+cd devpulse
 
-To install: press `Ctrl+Shift+X` → search the name → click Install.
+# 2. Install dependencies
+npm install
 
----
+# 3. Start the dev server
+npm run dev
 
-## Going Live — Wiring Real APIs
+# 4. Open in browser
+# → http://localhost:5173
 
-### Docker (AWS ECR or Docker Hub)
+Creating a GitHub Personal Access Token
+1.	Go to https://github.com/settings/tokens?type=beta
+2.	Click Generate new token
+3.	Set a name (e.g. devpulse) and an expiry date
+4.	Under Repository permissions set:
+o	Actions → Read-only ✅
+o	Contents → Read-only ✅
+5.	Click Generate token — copy it immediately, it won't be shown again
+Then on the DevPulse login screen enter your token, GitHub username, and repo name.
+🔒 Security note: Your token is stored only in browser memory (React state). It is never saved to localStorage, cookies, or sent to any server. Refreshing the page clears it completely.
 
-You need a **backend proxy** because Docker Registry APIs require server-side auth.
+🔌 Connecting Real APIs
+Docker and CloudWatch use mock data by default because their APIs require server-side auth — browsers cannot call AWS or Docker registries directly. To connect real data you need a small backend proxy.
+1. Create a backend proxy
+mkdir server && cd server
+npm init -y
+npm install express cors @aws-sdk/client-ecr @aws-sdk/client-cloudwatch
 
-1. Create a `server/` folder with a Node/Express app
-2. Install: `npm install express @aws-sdk/client-ecr cors`
-3. Create a `/api/builds` endpoint that calls ECR:
-```js
+2. Wire Docker (AWS ECR)
+// server/index.js
 import { ECRClient, DescribeImagesCommand } from '@aws-sdk/client-ecr'
 const ecr = new ECRClient({ region: 'us-east-1' })
-// ...serve results at /api/builds
-```
-4. In `src/services/dockerService.js`, replace the mock with:
-```js
-const res = await fetch('/api/builds')
-return res.json()
-```
 
-### AWS CloudWatch
+app.get('/api/builds', async (req, res) => {
+  const data = await ecr.send(new DescribeImagesCommand({ repositoryName: 'your-repo' }))
+  res.json(data.imageDetails)
+})
 
-Same pattern — the AWS SDK must run server-side:
+3. Update the frontend service
+In src/services/dockerService.js, replace the mock with:
+export async function fetchDockerBuilds() {
+  const res = await fetch('/api/builds')
+  return res.json()
+}
 
-1. In your backend, install `@aws-sdk/client-cloudwatch`
-2. Create a `/api/metrics` endpoint
-3. In `src/services/cloudwatchService.js`, replace the mock with:
-```js
-const res = await fetch('/api/metrics')
-return res.json()
-```
+Do the same for cloudwatchService.js → /api/metrics.
 
----
-
-## Build for Production
-
-```bash
+📦 Build for Production
 npm run build
-```
+# Output in dist/
 
-Output goes to `dist/`. Deploy to Vercel, Netlify, or any static host:
-
-```bash
-# Vercel (one command deploy)
+Deploy to Vercel:
 npx vercel
 
-# Netlify
+Deploy to Netlify:
 npx netlify deploy --prod --dir=dist
-```
 
----
 
-## Troubleshooting
+🐛 Troubleshooting
+Problem	Fix
+npm install times out	Retry, or run npm install --timeout=60000
+Still failing	npm config set registry https://registry.npmmirror.com
+CORS error on login	Hard refresh Ctrl+Shift+R or open incognito tab
+Dashboard blank after login	rm -rf node_modules/.vite then npm run dev
+GitHub 401 error	Token expired — regenerate at github.com/settings/tokens
+GitHub 404 error	Check owner/repo spelling — it is case-sensitive
+@/ import not resolving	Check vite.config.js has the path alias, then restart server
+White screen / crash	Open DevTools F12 → Console tab for the exact error
 
-| Problem | Fix |
-|---------|-----|
-| `npm install` fails | Make sure Node ≥ 18: `node --version` |
-| Port 5173 already in use | `npm run dev -- --port 3000` |
-| GitHub API 401 error | Token expired or wrong scope — regenerate it |
-| GitHub API 404 error | Check owner/repo spelling (case-sensitive) |
-| `@/` import not found | Make sure `vite.config.js` is in root with the alias |
-| Blank page after login | Open browser DevTools (F12) → Console tab for errors |
 
----
+🗺️ Roadmap
+·	Node.js backend for real Docker + CloudWatch data
+·	Slack / email alerts on pipeline failures
+·	Multi-repo support — monitor several repos at once
+·	Deployment timeline with rollback indicators
+·	Mobile responsive layout
+·	Light / dark theme toggle
+·	Export pipeline history as CSV
 
-## Available Scripts
+🤝 Contributing
+Contributions are welcome! Please open an issue first to discuss what you would like to change.
+# 1. Fork the repo
+# 2. Create a feature branch
+git checkout -b feature/your-feature
 
-```bash
-npm run dev      # Start development server (http://localhost:5173)
-npm run build    # Build for production → dist/
-npm run preview  # Preview production build locally
-npm run lint     # Run ESLint on all source files
-```
+# 3. Commit your changes
+git commit -m 'feat: add your feature'
+
+# 4. Push and open a Pull Request
+git push origin feature/your-feature
+
+
+📄 License
+MIT © Brayan Ngowi
+
+
+  Built with ❤️ for developers who are tired of checking 5 tabs to know if their build is green.
