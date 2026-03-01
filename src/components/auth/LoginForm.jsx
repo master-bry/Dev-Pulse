@@ -25,9 +25,9 @@ export default function LoginForm({ onSubmit, loading, error }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <input type="password" placeholder="GitHub Token (ghp_...)"
           value={token} onChange={e => setToken(e.target.value)} style={inp} />
-        <input type="text" placeholder="Owner / Username (e.g. master-bry)"
+        <input type="text" placeholder="Owner of Repo/ Username (github username)"
           value={owner} onChange={e => setOwner(e.target.value)} style={inp} />
-        <input type="text" placeholder="Repository (e.g. FloodAlertApp)"
+        <input type="text" placeholder="Repository (github repository name)"
           value={repo} onChange={e => setRepo(e.target.value)} style={inp} />
       </div>
 
