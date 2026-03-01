@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useCallback } from 'react'
-import { validateCredentials } from '@/services/githubService'
 
 const AuthContext = createContext(null)
 
@@ -9,34 +8,43 @@ export function AuthProvider({ children }) {
   const [error, setError]     = useState('')
 
   const login = useCallback(async ({ token, owner, repo }) => {
-    if (!token || !owner || !repo) {
-      setError('All fields are required.')
-      return
-    }
     setLoading(true)
     setError('')
+
     try {
-      await validateCredentials({ token, owner, repo })
-      setCreds({ token, owner, repo })
-    } catch (err) {
-      // If validation itself throws (e.g. network error), still let the user
-      // proceed — the dashboard will show the real error when it tries to load.
-      console.warn('Credential validation warning:', err.message)
-      // Only block on clear auth errors (401/403), not network issues
-      if (err.message.includes('401') || err.message.includes('Bad credentials')) {
-        setError('Invalid token — please check your GitHub PAT.')
+      // Validate by hitting the repo endpoint — simplest CORS-safe call
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/vnd.github+json',
+        },
+      })
+
+      if (res.status === 401) {
+        setError('Invalid token. Please check your GitHub PAT.')
         setLoading(false)
         return
       }
-      if (err.message.includes('404') || err.message.includes('Not Found')) {
-        setError('Repository not found — check owner and repo name.')
+      if (res.status === 404) {
+        setError('Repository not found. Check owner and repo name.')
         setLoading(false)
         return
       }
-      // For CORS/network errors, trust the user and proceed anyway
-      setCreds({ token, owner, repo })
-    } finally {
+      if (res.status === 403) {
+        setError('Access forbidden. Your token may lack required permissions.')
+        setLoading(false)
+        return
+      }
+
+      // Success — store credentials and let ProtectedRoute navigate
       setLoading(false)
+      setCreds({ token, owner, repo })
+
+    } catch (err) {
+      // Network error — still let them through, dashboard will show error
+      console.warn('Login network error:', err.message)
+      setLoading(false)
+      setCreds({ token, owner, repo })
     }
   }, [])
 
