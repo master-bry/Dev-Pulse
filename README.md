@@ -1,236 +1,492 @@
-📊 DevPulse — CI/CD Monitoring Dashboard
-A real-time DevOps dashboard that aggregates GitHub Actions pipelines, Docker build logs, and AWS CloudWatch metrics into one clean interface.
+<div align="center">
 
+```
+██████╗ ███████╗██╗   ██╗██████╗ ██╗   ██╗██╗     ███████╗███████╗
+██╔══██╗██╔════╝██║   ██║██╔══██╗██║   ██║██║     ██╔════╝██╔════╝
+██║  ██║█████╗  ██║   ██║██████╔╝██║   ██║██║     ███████╗█████╗  
+██║  ██║██╔══╝  ╚██╗ ██╔╝██╔═══╝ ██║   ██║██║     ╚════██║██╔══╝  
+██████╔╝███████╗ ╚████╔╝ ██║     ╚██████╔╝███████╗███████║███████╗
+╚═════╝ ╚══════╝  ╚═══╝  ╚═╝      ╚═════╝ ╚══════╝╚══════╝╚══════╝
+```
 
+**CI/CD Monitoring Dashboard**
 
+*Real-time GitHub Actions · Docker Builds · AWS CloudWatch — all in one screen*
 
+![version](https://img.shields.io/badge/version-1.0.0-00dcbe?style=flat-square)
+![react](https://img.shields.io/badge/react-18.2.0-61dafb?style=flat-square&logo=react&logoColor=white)
+![vite](https://img.shields.io/badge/vite-5.1.0-646cff?style=flat-square&logo=vite&logoColor=white)
+![router](https://img.shields.io/badge/react--router-6.22.0-ca4245?style=flat-square&logo=reactrouter&logoColor=white)
+![license](https://img.shields.io/badge/license-MIT-00e676?style=flat-square)
 
+</div>
 
+---
 
+## `$ whoami` &nbsp;—&nbsp; About The Project
 
-🚀 What is DevPulse?
-DevPulse is a developer tool built to solve a common frustration — having to check GitHub, Docker Hub, AWS Console, and Slack separately just to know if your deployment is healthy.
-Instead of switching between 5 tabs, DevPulse gives you one screen that shows everything:
-·	⚡ GitHub Actions — Live workflow run statuses, commit messages, durations, and branches
-·	🐳 Docker Builds — Image build history, registry pushes, cache hits, and failures
-·	☁️ AWS CloudWatch — CPU, memory, request rate, and latency metrics with alarm detection
+```
+DevPulse is a developer-first CI/CD dashboard built with React + Vite.
 
-✨ Features
-GitHub Actions (Live Data)
-·	Connects to the real GitHub API using your Personal Access Token
-·	Shows all workflow runs with status, branch, commit message, and duration
-·	Colour-coded status dots: 🟢 success · 🔵 running · 🔴 failed · 🟡 queued
-·	Pulsing animation for in-progress runs
-·	Auto-refreshes every 30 seconds
-·	Manual refresh button with "last updated X minutes ago"
-Docker Builds
-·	Build history with image name, tag, registry, size, and layer count
-·	Status tracking: pushed, building, failed, cached
-·	Ready to wire to AWS ECR or Docker Hub via a backend proxy
-AWS CloudWatch
-·	Four metric cards: CPU Utilisation, Memory Usage, Request Rate, P99 Latency
-·	Area charts with 24-point time series
-·	Live delta indicators (▲ up / ▼ down vs 5 data points ago)
-·	WARN and CRIT alarm badges when metrics cross thresholds
-·	Glowing alarm animation for critical alerts
-General
-·	🌑 Dark terminal-noir UI with JetBrains Mono + Syne fonts
-·	Live UTC clock in the header
-·	Staggered entrance animations
-·	Token stored in memory only — never saved to localStorage or any server
-·	Fully component-based MVC architecture
+Problem:   Developers check GitHub, Docker Hub, AWS Console, and Slack
+           separately just to know if a deployment is healthy.
 
-🖥️ Preview
-┌──────────────────────────────────────────────────────┐
-│ 📊 DevPulse          master-bry/FloodAlertApp  LIVE  │
-├──────────────────────────────────────────────────────┤
-│ ⚡ master-bry/FloodAlertApp — Actions                 │
-│  ● CI          master  Add CI workflow   success  7s │
-├─────────────────────────┬────────────────────────────┤
-│ 🐳 Docker Builds        │ ☁️  AWS CloudWatch         │
-│  ● api-gateway  pushed  │  CPU  44%  ▲ 3%   [OK]     │
-│  ● frontend     building│  MEM  67%  ▼ 1%   [OK]     │
-│  ● worker       failed  │  RPS  1240 ▲ 80   [OK]     │
-│                         │  P99  82ms ▲ 12ms [CRIT]   │
-└─────────────────────────┴────────────────────────────┘
+Solution:  One screen. Three panels. Everything at a glance.
+```
 
+```yaml
+panels:
+  - name: "⚡ GitHub Actions"
+    data: LIVE via GitHub REST API
+    shows: workflow runs, statuses, commit messages, branches, durations
 
-🗂️ Project Structure
-This project follows an MVC pattern adapted for React — every file has one clear job.
-devpulse/
-├── src/
-│   ├── services/              # MODEL — API calls only
-│   │   ├── githubService.js   # GitHub REST API
-│   │   ├── dockerService.js   # Docker builds (mock → real)
-│   │   └── cloudwatchService.js # AWS CloudWatch (mock → real)
-│   │
-│   ├── hooks/                 # MODEL — State & business logic
-│   │   ├── useAuth.jsx        # Auth context, login/logout
-│   │   ├── usePipelines.js    # GitHub runs + auto-refresh polling
-│   │   ├── useDockerBuilds.js # Docker state management
-│   │   ├── useMetrics.js      # CloudWatch metrics state
-│   │   └── useClock.js        # Live UTC clock
-│   │
-│   ├── components/            # VIEW — All JSX/UI
-│   │   ├── shared/            # Reusable atoms
-│   │   │   ├── StatusDot.jsx
-│   │   │   ├── Badge.jsx
-│   │   │   ├── Spinner.jsx
-│   │   │   ├── Sparkline.jsx
-│   │   │   ├── AreaChart.jsx
-│   │   │   ├── SectionCard.jsx
-│   │   │   ├── StatBar.jsx
-│   │   │   └── TableHeader.jsx
-│   │   ├── layout/
-│   │   │   ├── Header.jsx
-│   │   │   └── DashboardLayout.jsx
-│   │   ├── auth/
-│   │   │   ├── LoginForm.jsx
-│   │   │   └── ProtectedRoute.jsx
-│   │   ├── pipelines/
-│   │   │   ├── PipelinesPanel.jsx
-│   │   │   └── PipelineRow.jsx
-│   │   ├── docker/
-│   │   │   ├── DockerPanel.jsx
-│   │   │   └── DockerRow.jsx
-│   │   └── cloudwatch/
-│   │       ├── CloudWatchPanel.jsx
-│   │       └── MetricCard.jsx
-│   │
-│   ├── pages/                 # CONTROLLER — Page composers
-│   │   ├── LoginPage.jsx
-│   │   └── DashboardPage.jsx
-│   │
-│   ├── styles/
-│   │   ├── global.css         # CSS variables + animations
-│   │   └── theme.js           # JS colour + font constants
-│   │
-│   └── utils/
-│       ├── formatters.js      # formatDuration, timeAgo, truncate
-│       └── chartHelpers.js    # SVG point generation
+  - name: "🐳 Docker Builds"
+    data: Mock (ECR / DockerHub backend-ready)
+    shows: image builds, tags, registries, sizes, push status
+
+  - name: "☁️  AWS CloudWatch"
+    data: Mock (AWS SDK backend-ready)
+    shows: CPU, memory, request rate, P99 latency, alarm states
+```
+
+---
+
+## `$ cat features.md`
+
+```diff
++ GitHub Actions
++   Live workflow runs pulled from the real GitHub API
++   Colour-coded status dots — success / running / failed / queued / cancelled
++   Pulsing animation on in-progress runs
++   Auto-refresh every 30 seconds
++   Summary stats: Total Runs · Running · Failed
++   Manual refresh with "last updated X ago" indicator
+
++ Docker Builds
++   Image name, tag, registry (ECR / DockerHub)
++   Status tracking: pushed · building · failed · cached
++   Build duration, image size, layer count
+
++ AWS CloudWatch
++   Four metric cards: CPU · Memory · Request Rate · P99 Latency
++   Area charts with 24-point time series
++   Delta indicators: ▲ up / ▼ down vs 5 points ago
++   WARN and CRIT alarm badges with glow animations
++   Threshold lines on each chart
+
++ UI / UX
++   Dark terminal-noir aesthetic
++   JetBrains Mono + Syne fonts
++   Live UTC clock in header (updates every second)
++   Staggered entrance animations
++   Responsive layout
+!   Token stored in browser memory only — never in localStorage or any server
+```
+
+---
+
+## `$ tree src/`
+
+```
+src/
 │
-├── index.html
-├── vite.config.js
-└── package.json
+├── services/                   # ── MODEL: API communication layer
+│   ├── githubService.js        #    GitHub REST API calls
+│   ├── dockerService.js        #    Docker builds  (mock → swap for real)
+│   └── cloudwatchService.js    #    CloudWatch metrics (mock → swap for real)
+│
+├── hooks/                      # ── MODEL: State & business logic
+│   ├── useAuth.jsx             #    Auth context, login, logout
+│   ├── usePipelines.js         #    Fetch runs + 30s polling
+│   ├── useDockerBuilds.js      #    Docker state management
+│   ├── useMetrics.js           #    CloudWatch state + alarm detection
+│   └── useClock.js             #    Live UTC clock (1s interval)
+│
+├── components/                 # ── VIEW: All UI components
+│   ├── shared/                 #    Reusable atomic components
+│   │   ├── StatusDot.jsx       #      Coloured pulsing status circle
+│   │   ├── Badge.jsx           #      Pill label (success / failed / etc.)
+│   │   ├── Spinner.jsx         #      Loading spinner
+│   │   ├── Sparkline.jsx       #      Compact SVG line chart
+│   │   ├── AreaChart.jsx       #      Responsive SVG area chart
+│   │   ├── SectionCard.jsx     #      Card shell with header bar
+│   │   ├── StatBar.jsx         #      Summary stats row
+│   │   └── TableHeader.jsx     #      Column headers for data tables
+│   │
+│   ├── layout/
+│   │   ├── Header.jsx          #    Sticky top bar + clock + disconnect
+│   │   └── DashboardLayout.jsx #    Root layout with scan-line overlay
+│   │
+│   ├── auth/
+│   │   ├── LoginForm.jsx       #    Token + owner + repo input form
+│   │   └── ProtectedRoute.jsx  #    Redirects to /login if no credentials
+│   │
+│   ├── pipelines/
+│   │   ├── PipelinesPanel.jsx  #    GitHub Actions section
+│   │   └── PipelineRow.jsx     #    Single workflow run row
+│   │
+│   ├── docker/
+│   │   ├── DockerPanel.jsx     #    Docker builds section
+│   │   └── DockerRow.jsx       #    Single build row
+│   │
+│   └── cloudwatch/
+│       ├── CloudWatchPanel.jsx #    CloudWatch section
+│       └── MetricCard.jsx      #    Single metric card + area chart
+│
+├── pages/                      # ── CONTROLLER: Page-level composers
+│   ├── LoginPage.jsx           #    Login screen (owns useAuth call)
+│   └── DashboardPage.jsx       #    Dashboard (composes the 3 panels)
+│
+├── styles/
+│   ├── global.css              #    CSS variables, reset, keyframe animations
+│   └── theme.js                #    JS colour + font constants + statusColor()
+│
+└── utils/
+    ├── formatters.js           #    formatDuration · timeAgo · truncate
+    └── chartHelpers.js         #    SVG polyline point generation
+```
 
+---
 
-⚙️ Tech Stack
-Layer	Technology
-Frontend Framework	React 18
-Build Tool	Vite 5
-Routing	React Router v6
-Styling	Inline CSS + CSS Variables
-Charts	Custom SVG (no chart library)
-Fonts	JetBrains Mono + Syne (Google Fonts)
-Data — Pipelines	GitHub REST API v3 (live)
-Data — Docker	Mock service (ECR / DockerHub ready)
-Data — Metrics	Mock service (AWS SDK ready)
-Language	JavaScript ES2022
+## `$ cat stack.json`
 
+```json
+{
+  "frontend": {
+    "framework":  "React 18.2",
+    "bundler":    "Vite 5.1",
+    "routing":    "React Router 6.22",
+    "language":   "JavaScript ES2022",
+    "styling":    "Inline CSS + CSS Custom Properties",
+    "charts":     "Hand-built SVG — zero chart libraries"
+  },
+  "fonts": {
+    "monospace": "JetBrains Mono (code, tables, timestamps)",
+    "display":   "Syne (headings, labels, values)"
+  },
+  "data": {
+    "pipelines": "GitHub REST API v3 — LIVE",
+    "docker":    "Mock service — backend-ready for ECR / DockerHub",
+    "metrics":   "Mock service — backend-ready for AWS CloudWatch SDK"
+  },
+  "architecture": "MVC — services / hooks / components / pages",
+  "security":     "Token in React state only — never persisted anywhere"
+}
+```
 
-🛠️ Getting Started
-Prerequisites
-·	Node.js v18 or higher
-·	npm (comes with Node)
-·	A GitHub account with at least one repo that has Actions workflows
-Installation
-# 1. Clone the repo
+---
+
+## `$ npm install && npm run dev`
+
+### Prerequisites
+
+```bash
+node --version   # must be v18 or higher
+npm --version    # comes with Node
+```
+
+### Quick Start
+
+```bash
+# Clone
 git clone https://github.com/master-bry/devpulse.git
 cd devpulse
 
-# 2. Install dependencies
+# Install
 npm install
 
-# 3. Start the dev server
+# Run
 npm run dev
+# → Local:   http://localhost:5173
+```
 
-# 4. Open in browser
-# → http://localhost:5173
+### Available Scripts
 
-Creating a GitHub Personal Access Token
-1.	Go to https://github.com/settings/tokens?type=beta
-2.	Click Generate new token
-3.	Set a name (e.g. devpulse) and an expiry date
-4.	Under Repository permissions set:
-o	Actions → Read-only ✅
-o	Contents → Read-only ✅
-5.	Click Generate token — copy it immediately, it won't be shown again
-Then on the DevPulse login screen enter your token, GitHub username, and repo name.
-🔒 Security note: Your token is stored only in browser memory (React state). It is never saved to localStorage, cookies, or sent to any server. Refreshing the page clears it completely.
+```bash
+npm run dev       # Start dev server with hot-reload
+npm run build     # Build for production  →  dist/
+npm run preview   # Preview production build locally
+npm run lint      # Run ESLint on all source files
+```
 
-🔌 Connecting Real APIs
-Docker and CloudWatch use mock data by default because their APIs require server-side auth — browsers cannot call AWS or Docker registries directly. To connect real data you need a small backend proxy.
-1. Create a backend proxy
+---
+
+## `$ gh auth setup`
+
+DevPulse needs a **GitHub Fine-Grained Personal Access Token** to fetch your live Actions data.
+
+```bash
+# Step 1 — Go to:
+https://github.com/settings/tokens?type=beta
+
+# Step 2 — Click "Generate new token", then set:
+Name:        devpulse-dashboard
+Expiration:  30 days (your preference)
+Access:      Select your target repository
+
+# Step 3 — Under "Repository permissions" enable:
+Actions   →  Read-only   ✅
+Contents  →  Read-only   ✅  (for commit messages)
+
+# Step 4 — Copy your token immediately!
+# It looks like: github_pat_11ABCDEF...
+```
+
+```
+┌─────────────────────────────────────────────┐
+│           DevPulse Login Screen             │
+├─────────────────────────────────────────────┤
+│  GitHub Token   │  github_pat_11ABCDEF...   │
+│  Owner          │  master-bry               │
+│  Repository     │  FloodAlertApp            │
+│                 │                           │
+│        [ Connect & Load Dashboard ]         │
+└─────────────────────────────────────────────┘
+```
+
+> **Security:** Your token is stored in React state (RAM only). It is never written to `localStorage`, cookies, a database, or any external server. Closing or refreshing the tab clears it completely.
+
+---
+
+## `$ curl -X GET /api/live-data`
+
+```
+How data flows through the app:
+─────────────────────────────────────────────────────────────
+
+  Browser
+    │
+    ├── / (login)
+    │     LoginPage ──► useAuth ──► validateCredentials()
+    │                                    │
+    │                              GET /repos/{owner}/{repo}
+    │                                    │
+    │                           ✅ 200 OK → setCreds → navigate('/')
+    │                           ❌ 401   → "Invalid token"
+    │                           ❌ 404   → "Repo not found"
+    │
+    └── / (dashboard)
+          │
+          ├── PipelinesPanel
+          │     usePipelines ──► fetchWorkflowRuns()
+          │                           │
+          │                     GET /repos/{owner}/{repo}/actions/runs
+          │                           │
+          │                     setRuns([...]) → render rows
+          │                     ↺ repeat every 30 seconds
+          │
+          ├── DockerPanel
+          │     useDockerBuilds ──► fetchDockerBuilds()
+          │                              │
+          │                        returns MOCK_BUILDS array
+          │                        (swap for fetch('/api/builds'))
+          │
+          └── CloudWatchPanel
+                useMetrics ──► fetchMetrics()
+                                    │
+                              returns MOCK_METRICS array
+                              (swap for fetch('/api/metrics'))
+                              ↺ repeat every 60 seconds
+```
+
+---
+
+## `$ docker build -t devpulse:live .`  &nbsp;—&nbsp; Connecting Real APIs
+
+Docker and CloudWatch use mock data because browser security blocks direct calls to AWS/Docker APIs. To go live, create a small backend proxy:
+
+### 1 — Setup the proxy server
+
+```bash
 mkdir server && cd server
 npm init -y
-npm install express cors @aws-sdk/client-ecr @aws-sdk/client-cloudwatch
+npm install express cors @aws-sdk/client-ecr @aws-sdk/client-cloudwatch dotenv
+```
 
-2. Wire Docker (AWS ECR)
-// server/index.js
+### 2 — Wire Docker (AWS ECR)
+
+```js
+// server/routes/builds.js
 import { ECRClient, DescribeImagesCommand } from '@aws-sdk/client-ecr'
-const ecr = new ECRClient({ region: 'us-east-1' })
 
-app.get('/api/builds', async (req, res) => {
-  const data = await ecr.send(new DescribeImagesCommand({ repositoryName: 'your-repo' }))
-  res.json(data.imageDetails)
-})
+const ecr = new ECRClient({ region: process.env.AWS_REGION })
 
-3. Update the frontend service
-In src/services/dockerService.js, replace the mock with:
+export async function getBuilds(req, res) {
+  try {
+    const result = await ecr.send(new DescribeImagesCommand({
+      repositoryName: process.env.ECR_REPO_NAME
+    }))
+    res.json(result.imageDetails)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+}
+```
+
+### 3 — Wire CloudWatch Metrics
+
+```js
+// server/routes/metrics.js
+import { CloudWatchClient, GetMetricDataCommand } from '@aws-sdk/client-cloudwatch'
+
+const cw = new CloudWatchClient({ region: process.env.AWS_REGION })
+
+export async function getMetrics(req, res) {
+  const now = new Date()
+  const start = new Date(now - 60 * 60 * 1000)   // last 1 hour
+
+  const result = await cw.send(new GetMetricDataCommand({
+    StartTime: start,
+    EndTime: now,
+    MetricDataQueries: [
+      { Id: 'cpu', MetricStat: { Metric: { Namespace: 'AWS/EC2', MetricName: 'CPUUtilization' }, Period: 300, Stat: 'Average' } },
+    ]
+  }))
+  res.json(result.MetricDataResults)
+}
+```
+
+### 4 — Update the frontend services
+
+```js
+// src/services/dockerService.js  — replace mock:
 export async function fetchDockerBuilds() {
   const res = await fetch('/api/builds')
+  if (!res.ok) throw new Error(`API ${res.status}`)
   return res.json()
 }
 
-Do the same for cloudwatchService.js → /api/metrics.
+// src/services/cloudwatchService.js  — replace mock:
+export async function fetchMetrics() {
+  const res = await fetch('/api/metrics')
+  if (!res.ok) throw new Error(`API ${res.status}`)
+  return res.json()
+}
+```
 
-📦 Build for Production
+---
+
+## `$ npm run build && vercel --prod`
+
+```bash
+# Build
 npm run build
-# Output in dist/
+# → output: dist/
 
-Deploy to Vercel:
+# Deploy to Vercel
 npx vercel
+# → https://devpulse.vercel.app
 
-Deploy to Netlify:
+# Deploy to Netlify
 npx netlify deploy --prod --dir=dist
+# → https://devpulse.netlify.app
+```
 
+---
 
-🐛 Troubleshooting
-Problem	Fix
-npm install times out	Retry, or run npm install --timeout=60000
-Still failing	npm config set registry https://registry.npmmirror.com
-CORS error on login	Hard refresh Ctrl+Shift+R or open incognito tab
-Dashboard blank after login	rm -rf node_modules/.vite then npm run dev
-GitHub 401 error	Token expired — regenerate at github.com/settings/tokens
-GitHub 404 error	Check owner/repo spelling — it is case-sensitive
-@/ import not resolving	Check vite.config.js has the path alias, then restart server
-White screen / crash	Open DevTools F12 → Console tab for the exact error
+## `$ tail -f error.log` &nbsp;—&nbsp; Troubleshooting
 
+```
+┌─────────────────────────────────────┬────────────────────────────────────────────────────┐
+│ Error                               │ Fix                                                │
+├─────────────────────────────────────┼────────────────────────────────────────────────────┤
+│ npm install → ERR_SOCKET_TIMEOUT    │ Retry: npm install --timeout=60000                 │
+│ Still timing out                    │ npm config set registry https://registry.npmmirror │
+│ CORS blocked on login               │ Ctrl+Shift+R  or  open incognito tab               │
+│ Dashboard blank after login         │ rm -rf node_modules/.vite  then npm run dev        │
+│ GitHub API 401                      │ Token expired → regenerate at github.com/settings  │
+│ GitHub API 404                      │ owner/repo is case-sensitive — double-check it     │
+│ @/ import not found                 │ Check vite.config.js alias, restart server         │
+│ useAuth context error               │ Replace useAuth.jsx + LoginForm.jsx (latest ver.)  │
+│ White screen / crash                │ F12 → Console tab → read the red error             │
+└─────────────────────────────────────┴────────────────────────────────────────────────────┘
+```
 
-🗺️ Roadmap
-·	Node.js backend for real Docker + CloudWatch data
-·	Slack / email alerts on pipeline failures
-·	Multi-repo support — monitor several repos at once
-·	Deployment timeline with rollback indicators
-·	Mobile responsive layout
-·	Light / dark theme toggle
-·	Export pipeline history as CSV
+---
 
-🤝 Contributing
-Contributions are welcome! Please open an issue first to discuss what you would like to change.
-# 1. Fork the repo
-# 2. Create a feature branch
-git checkout -b feature/your-feature
+## `$ git log --oneline` &nbsp;—&nbsp; Roadmap
 
-# 3. Commit your changes
-git commit -m 'feat: add your feature'
+```
+[ ] feat: node.js backend proxy for real Docker + CloudWatch data
+[ ] feat: slack / email alerts on pipeline failures
+[ ] feat: multi-repo support — monitor several repos at once
+[ ] feat: deployment timeline with rollback detection
+[ ] feat: mobile responsive layout optimisation
+[ ] feat: light / dark theme toggle
+[ ] feat: export pipeline history as CSV
+[ ] feat: configurable refresh intervals per panel
+[ ] chore: TypeScript migration
+```
 
-# 4. Push and open a Pull Request
-git push origin feature/your-feature
+---
 
+## `$ git clone && git push` &nbsp;—&nbsp; Contributing
 
-📄 License
-MIT © Brayan Ngowi
+```bash
+# 1. Fork the repo on GitHub
 
+# 2. Clone your fork
+git clone https://github.com/YOUR_USERNAME/devpulse.git
+cd devpulse
 
-  Built with ❤️ for developers who are tired of checking 5 tabs to know if their build is green.
+# 3. Create a feature branch
+git checkout -b feature/your-feature-name
+
+# 4. Make your changes, then commit
+git add .
+git commit -m "feat: describe your change here"
+
+# 5. Push and open a Pull Request
+git push origin feature/your-feature-name
+```
+
+```
+Commit message format:
+  feat:     new feature
+  fix:      bug fix
+  docs:     documentation only
+  style:    formatting, no logic change
+  refactor: code restructure, no behaviour change
+  chore:    build / config changes
+```
+
+---
+
+## `$ cat LICENSE`
+
+```
+MIT License
+
+Copyright (c) 2026 Brayan Ngowi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+```
+
+---
+
+<div align="center">
+
+```
+╔══════════════════════════════════════════════════════╗
+║                                                      ║
+║   Built by Brayan Ngowi  ·  github.com/master-bry   ║
+║                                                      ║
+║   Built for developers tired of checking 5 tabs     ║
+║   just to know if the build is green. 🟢             ║
+║                                                      ║
+╚══════════════════════════════════════════════════════╝
+```
+
+</div>
