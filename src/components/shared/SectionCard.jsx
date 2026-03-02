@@ -1,50 +1,25 @@
 import React from 'react'
-import { colors, fonts } from '@/styles/theme'
-
-/**
- * SectionCard — consistent card shell for each dashboard panel.
- * @param {{ icon: string, title: string, right?: ReactNode, children: ReactNode, delay?: number }} props
- */
 export default function SectionCard({ icon, title, right, children, delay = 0 }) {
   return (
-    <div
-      className="slide-in"
-      style={{
-        background:   colors.bg1,
-        border:       `1px solid ${colors.border}`,
-        borderRadius: 14,
-        overflow:     'hidden',
-        animationDelay: `${delay}ms`,
-      }}
-    >
-      {/* Header bar */}
-      <div
-        style={{
-          display:       'flex',
-          alignItems:    'center',
-          gap:           10,
-          padding:       '13px 20px',
-          borderBottom:  `1px solid ${colors.border}`,
-          background:    `linear-gradient(90deg, ${colors.bg2} 0%, ${colors.bg1} 100%)`,
-        }}
-      >
-        <span style={{ fontSize: 16 }}>{icon}</span>
-        <span
-          style={{
-            fontFamily:    fonts.display,
-            fontSize:      13,
-            fontWeight:    700,
-            color:         colors.textBright,
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-          }}
-        >
-          {title}
-        </span>
-        <div style={{ marginLeft: 'auto' }}>{right}</div>
+    <div style={{
+      background: 'var(--bg1)', border: '1px solid var(--border)',
+      borderRadius: 12, overflow: 'hidden',
+      animation: `slide-in 0.4s cubic-bezier(0.16,1,0.3,1) ${delay}ms both`,
+      boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+    }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '11px 18px', borderBottom: '1px solid var(--border)',
+        background: 'var(--bg2)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 13 }}>{icon}</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 700, color: 'var(--text-bright)', letterSpacing: '-0.01em' }}>
+            {title}
+          </span>
+        </div>
+        {right && <div>{right}</div>}
       </div>
-
-      {/* Body */}
       {children}
     </div>
   )

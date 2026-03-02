@@ -1,47 +1,23 @@
 import React from 'react'
 import { useMetrics } from '@/hooks/useMetrics'
 import SectionCard from '@/components/shared/SectionCard'
-import Badge from '@/components/shared/Badge'
 import MetricCard from './MetricCard'
-import { colors } from '@/styles/theme'
 
-/**
- * CloudWatchPanel — AWS CloudWatch metrics grid section.
- */
 export default function CloudWatchPanel() {
-  const { metrics, activeAlarms, error } = useMetrics()
+  const { metrics, alarmCount } = useMetrics()
 
-  const right = (
-    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-      {activeAlarms.length > 0 && (
-        <Badge
-          label={`${activeAlarms.length} Alarm${activeAlarms.length > 1 ? 's' : ''}`}
-          color={colors.red}
-        />
-      )}
-      <Badge label="Mock Data" color={colors.yellow} />
-    </div>
+  const right = alarmCount > 0 ? (
+    <span style={{ fontSize: 11, color: 'var(--red)', background: 'rgba(255,77,77,0.1)', border: '1px solid rgba(255,77,77,0.2)', borderRadius: 6, padding: '2px 8px' }}>
+      {alarmCount} ALARM{alarmCount > 1 ? 'S' : ''}
+    </span>
+  ) : (
+    <span style={{ fontSize: 11, color: 'var(--green)' }}>● All OK</span>
   )
 
   return (
-    <SectionCard icon="☁️" title="AWS CloudWatch" right={right} delay={240}>
-      {error && (
-        <div style={{ padding: '16px 20px', color: colors.red, fontSize: 12 }}>
-          ⚠ {error}
-        </div>
-      )}
-
-      <div
-        style={{
-          display:             'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap:                 12,
-          padding:             14,
-        }}
-      >
-        {metrics.map((m, i) => (
-          <MetricCard key={m.id} metric={m} index={i} />
-        ))}
+    <SectionCard icon="☁️" title="AWS CloudWatch" right={right} delay={200}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, padding: 14 }}>
+        {metrics.map((m, i) => <MetricCard key={m.id} metric={m} index={i} />)}
       </div>
     </SectionCard>
   )

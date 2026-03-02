@@ -2,61 +2,81 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import LoginForm from '@/components/auth/LoginForm'
-import { colors, fonts } from '@/styles/theme'
+import ThemeSwitcher from '@/components/shared/ThemeSwitcher'
 
 export default function LoginPage() {
   const { login, loading, error, creds } = useAuth()
   const navigate = useNavigate()
 
-  // If already logged in, go straight to dashboard
   React.useEffect(() => {
     if (creds) navigate('/', { replace: true })
   }, [creds, navigate])
 
   return (
     <div style={{
-      minHeight: '100vh', background: colors.bg,
+      minHeight: '100vh', background: 'var(--bg)',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center', padding: 20,
+      position: 'relative',
     }}>
       <div className="scanlines" />
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 420 }}>
 
+      {/* Radial glow behind card */}
+      <div style={{
+        position: 'absolute', top: '35%', left: '50%', transform: 'translate(-50%,-50%)',
+        width: 600, height: 600, borderRadius: '50%',
+        background: 'radial-gradient(circle, var(--accent-faint) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Theme switcher */}
+      <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 10 }}>
+        <ThemeSwitcher />
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 400 }}>
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{
-            width: 52, height: 52, borderRadius: 14, margin: '0 auto 12px',
-            background: `linear-gradient(135deg, ${colors.cyanDim}, ${colors.cyan})`,
+            width: 48, height: 48, borderRadius: 14, margin: '0 auto 14px',
+            background: 'linear-gradient(135deg, var(--accent-dim), var(--accent))',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 26, boxShadow: `0 0 24px ${colors.cyan}40`,
-          }}>📊</div>
-          <h1 style={{ fontFamily: fonts.display, fontSize: 24, fontWeight: 800, color: colors.textBright }}>
+            fontSize: 18, fontWeight: 900, color: '#fff',
+            fontFamily: 'var(--font-display)',
+            boxShadow: '0 4px 20px var(--accent-faint)',
+          }}>DP</div>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 800, color: 'var(--text-bright)', letterSpacing: '-0.03em' }}>
             DevPulse
           </h1>
-          <p style={{ fontSize: 12, color: colors.textDim, marginTop: 4 }}>
-            CI/CD Dashboard · GitHub Actions · Docker · CloudWatch
+          <p style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 5 }}>
+            CI/CD Monitoring Dashboard
           </p>
         </div>
 
         {/* Card */}
         <div style={{
-          background: colors.bg1, border: `1px solid ${colors.border}`,
-          borderRadius: 14, padding: 24,
+          background: 'var(--bg1)', border: '1px solid var(--border)',
+          borderRadius: 16, padding: '28px 28px 24px',
+          boxShadow: 'var(--shadow)',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-            <span style={{ fontSize: 22 }}>🐙</span>
-            <div>
-              <div style={{ fontFamily: fonts.display, fontSize: 13, fontWeight: 700, color: colors.textBright }}>
-                Connect GitHub
-              </div>
-              <div style={{ fontSize: 11, color: colors.textDim, marginTop: 1 }}>
-                Requires a fine-grained PAT with Actions (read) scope
-              </div>
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 700, color: 'var(--text-bright)', marginBottom: 4 }}>
+              Connect GitHub
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-dim)' }}>
+              Enter your fine-grained PAT with Actions (read) scope
             </div>
           </div>
           <LoginForm onSubmit={login} loading={loading} error={error} />
         </div>
 
+        <p style={{ textAlign: 'center', marginTop: 18, fontSize: 11, color: 'var(--text-dim)', lineHeight: 1.7 }}>
+          Need a token? Visit{' '}
+          <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noreferrer"
+            style={{ color: 'var(--accent)', textDecoration: 'none' }}>
+            github.com/settings/tokens
+          </a>
+        </p>
       </div>
     </div>
   )
