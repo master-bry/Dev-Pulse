@@ -481,9 +481,9 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 ```
 ╔══════════════════════════════════════════════════════╗
 ║                                                      ║
-║   Built by Brayan Ngowi  ·  github.com/master-bry   ║
+║   Built by Brayan Ngowi  ·  github.com/master-bry    ║
 ║                                                      ║
-║   Built for developers tired of checking 5 tabs     ║
+║   Built for developers tired of checking 5 tabs      ║
 ║   just to know if the build is green. 🟢             ║
 ║                                                      ║
 ╚══════════════════════════════════════════════════════╝
