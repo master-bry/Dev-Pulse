@@ -23,7 +23,7 @@ export default function LoginForm({ onSubmit, loading, error }) {
     <form onSubmit={handleSubmit} noValidate>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <input type="password" placeholder="GitHub Token" value={token} onChange={e => setToken(e.target.value)} style={inp} />
-        <input type="text" placeholder="Owner / Username (e.g. master-bry)" value={owner} onChange={e => setOwner(e.target.value)} style={inp} />
+        <input type="text" placeholder="Owner / Username" value={owner} onChange={e => setOwner(e.target.value)} style={inp} />
         <input type="text" placeholder="Repository (e.g. FloodAlertApp)" value={repo} onChange={e => setRepo(e.target.value)} style={inp} />
       </div>
       {error && <p style={{ marginTop: 10, color: 'var(--red)', fontSize: 12, fontFamily: 'var(--font-mono)' }}>⚠ {error}</p>}
