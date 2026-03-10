@@ -11,6 +11,7 @@ export default function Header() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
+  
   const tabs = [
     { path: '/',          label: 'Dashboard', icon: '⊞' },
     { path: '/analytics', label: 'Analytics', icon: '↗' },
