@@ -69,7 +69,6 @@ export default function LoginPage() {
           </div>
           <LoginForm onSubmit={login} loading={loading} error={error} />
         </div>
-
         <p style={{ textAlign: 'center', marginTop: 18, fontSize: 11, color: 'var(--text-dim)', lineHeight: 1.7 }}>
           Need a token? Visit{' '}
           <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noreferrer"
