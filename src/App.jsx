@@ -10,6 +10,7 @@ import AnalyticsPage from '@/pages/AnalyticsPage'
 import LoginPage from '@/pages/LoginPage'
 
 export default function App() {
+  
   return (
     <ThemeProvider>
       <ToastProvider>
