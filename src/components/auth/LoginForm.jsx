@@ -7,13 +7,11 @@ export default function LoginForm({ onSubmit, loading, error }) {
   const [repo,  setRepo]  = useState('')
 
   const canSubmit = token.trim() && owner.trim() && repo.trim() && !loading
-
   
   const handleSubmit = (e) => {
     e.preventDefault()
     if (canSubmit) onSubmit({ token: token.trim(), owner: owner.trim(), repo: repo.trim() })
   }
-
 
   const inp = {
     width: '100%', background: 'var(--bg)', border: '1px solid var(--border)',
