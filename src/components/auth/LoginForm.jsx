@@ -36,12 +36,12 @@ export default function LoginForm({ onSubmit, loading, error }) {
         cursor: canSubmit ? 'pointer' : 'not-allowed',
         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
       }}>
-        {loading ? <><Spinner size={14} color="#000" /> Connecting…</> : 'Connect & Load Dashboard'}
+        {loading ? <><Spinner size={14} color="#140707" /> Connecting…</> : 'Connect & Load Dashboard'}
       </button>
       <p style={{
         marginTop: 12, fontSize: 11, color: 'var(--orange)', lineHeight: 1.6,
-        padding: '8px 12px', background: 'rgba(255,157,0,0.07)',
-        border: '1px solid rgba(255,157,0,0.2)', borderRadius: 7,
+        padding: '8px 12px', background: 'rgba(238, 40, 25, 0.07)',
+        border: '1px solid rgba(111, 31, 11, 0.2)', borderRadius: 7,
       }}>
         ⚠ Your token stays in browser memory only — never stored or sent anywhere.
       </p>
